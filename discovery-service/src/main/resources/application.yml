@@ -1,0 +1,13 @@
+server:
+  port: 8761
+
+# Eureka ID
+spring:
+  application:
+    name : discovery-service
+
+# 자신의 정보를 자신이 등록하지 않게하기 위해 방지(기본 true) 서버로서 기동만 한다.
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
