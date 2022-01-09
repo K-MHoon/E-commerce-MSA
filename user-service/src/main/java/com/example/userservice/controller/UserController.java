@@ -14,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/user-service")
 @RequiredArgsConstructor
@@ -27,7 +29,7 @@ public class UserController {
 
     @GetMapping("/health_check")
     public String status() {
-        return "It's Working in User Service";
+        return String.format("It's Working in User Service on PORT %s", env.getProperty("local.server.port"));
     }
 
     @GetMapping("/welcome")
@@ -39,5 +41,15 @@ public class UserController {
     @PostMapping("/users")
     public ResponseEntity<ResponseUser> createUser(@RequestBody RequestUser user) {
         return new ResponseEntity<>(userService.createUser(user), HttpStatus.CREATED);
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<List<ResponseUser>> getUsers() {
+        return new ResponseEntity<>(userService.getUserByAll(), HttpStatus.OK);
+    }
+
+    @GetMapping("/users/{userId}")
+    public ResponseEntity<ResponseUser> getUser(@PathVariable String userId) {
+        return new ResponseEntity<>(userService.getUserByUserId(userId), HttpStatus.OK);
     }
 }
