@@ -8,6 +8,7 @@
 		<module>discovery-service</module>
 		<module>apigateway-service</module>
         <module>catalog-service</module>
+        <module>order-service</module>
     </modules>
     <parent>
 		<groupId>org.springframework.boot</groupId>
