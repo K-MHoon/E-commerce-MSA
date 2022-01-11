@@ -9,6 +9,8 @@ import com.example.userservice.vo.ResponseUser;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -63,5 +65,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<ResponseUser> getUserByAll() {
         return userRepository.findAll().stream().map(v -> mapper.map(v, ResponseUser.class)).collect(Collectors.toList());
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException(username));
+        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getEncryptedPwd(),
+                true, true, true, true, new ArrayList<>());
     }
 }
