@@ -9,6 +9,7 @@
 		<module>apigateway-service</module>
         <module>catalog-service</module>
         <module>order-service</module>
+        <module>config-service</module>
     </modules>
     <parent>
 		<groupId>org.springframework.boot</groupId>
