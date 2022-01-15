@@ -1,0 +1,6 @@
+encrypt:
+#  key: abcdefghijklmnopqrstuvexyz1234567890
+  key-store:
+    location:
+    password:
+    alias:
