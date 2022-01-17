@@ -1,5 +1,6 @@
 package com.example.userservice.service;
 
+import com.example.userservice.client.OrderServiceClient;
 import com.example.userservice.dto.UserDto;
 import com.example.userservice.entity.User;
 import com.example.userservice.repository.UserRepository;
@@ -34,6 +35,7 @@ public class UserServiceImpl implements UserService {
     private final ModelMapper mapper;
     private final Environment env;
     private final RestTemplate restTemplate;
+    private final OrderServiceClient orderServiceClient;
 
     @Override
     public ResponseUser createUser(RequestUser requestUser) {
@@ -63,9 +65,12 @@ public class UserServiceImpl implements UserService {
 //        List<ResponseOrder> orders = new ArrayList<>();
 
         /* Using as rest Template */
-        String orderUrl = String.format(env.getProperty("order_service.url"), userId);
-        List<ResponseOrder> orderList = restTemplate.exchange(orderUrl, HttpMethod.GET, null, new ParameterizedTypeReference<List<ResponseOrder>>() {
-        }).getBody();
+//        String orderUrl = String.format(env.getProperty("order_service.url"), userId);
+//        List<ResponseOrder> orderList = restTemplate.exchange(orderUrl, HttpMethod.GET, null, new ParameterizedTypeReference<List<ResponseOrder>>() {
+//        }).getBody();
+
+        /* Using as feign client */
+        List<ResponseOrder> orderList = orderServiceClient.getOrders(userId);
 
         userDto.setOrders(orderList);
 
