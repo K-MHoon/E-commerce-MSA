@@ -9,10 +9,15 @@ import com.example.userservice.vo.ResponseUser;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
@@ -27,6 +32,8 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final ModelMapper mapper;
+    private final Environment env;
+    private final RestTemplate restTemplate;
 
     @Override
     public ResponseUser createUser(RequestUser requestUser) {
@@ -52,8 +59,15 @@ public class UserServiceImpl implements UserService {
                         new EntityNotFoundException("유저 정보를 찾을 수 없습니다."));
 
         UserDto userDto = mapper.map(user, UserDto.class);
-        List<ResponseOrder> orders = new ArrayList<>();
-        userDto.setOrders(orders);
+
+//        List<ResponseOrder> orders = new ArrayList<>();
+
+        /* Using as rest Template */
+        String orderUrl = String.format(env.getProperty("order_service.url"), userId);
+        List<ResponseOrder> orderList = restTemplate.exchange(orderUrl, HttpMethod.GET, null, new ParameterizedTypeReference<List<ResponseOrder>>() {
+        }).getBody();
+
+        userDto.setOrders(orderList);
 
         return mapper.map(userDto, ResponseUser.class);
     }
