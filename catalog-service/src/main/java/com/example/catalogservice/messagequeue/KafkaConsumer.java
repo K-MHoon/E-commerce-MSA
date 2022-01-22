@@ -12,6 +12,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -24,6 +25,7 @@ public class KafkaConsumer {
     private final CatalogRepository repository;
 
     @KafkaListener(topics = "example-catalog-topic")
+    @Transactional
     public void updateQty(String kafkaMessage) {
         log.info("Kafka Message: -> " + kafkaMessage);
 

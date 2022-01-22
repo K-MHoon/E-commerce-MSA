@@ -2,6 +2,7 @@ package com.example.orderservice.service;
 
 import com.example.orderservice.dto.OrderDto;
 import com.example.orderservice.entity.Order;
+import com.example.orderservice.messagequeue.KafkaProducer;
 import com.example.orderservice.repository.OrderRepository;
 import com.example.orderservice.vo.RequestOrder;
 import com.example.orderservice.vo.ResponseOrder;
@@ -22,6 +23,7 @@ public class OrderServiceImpl implements OrderService{
 
     private final OrderRepository orderRepository;
     private final ModelMapper mapper;
+    private final KafkaProducer kafkaProducer;
 
     @Override
     public ResponseOrder createOrder(String userId, RequestOrder requestOrder) {
@@ -35,6 +37,8 @@ public class OrderServiceImpl implements OrderService{
 
         Order order = mapper.map(orderDetails, Order.class);
         orderRepository.save(order);
+
+        kafkaProducer.send("example-catalog-topic", orderDetails);
 
         return mapper.map(order, ResponseOrder.class);
     }
