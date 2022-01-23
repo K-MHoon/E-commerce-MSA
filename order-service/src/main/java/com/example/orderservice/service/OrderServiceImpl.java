@@ -8,6 +8,7 @@ import com.example.orderservice.repository.OrderRepository;
 import com.example.orderservice.vo.RequestOrder;
 import com.example.orderservice.vo.ResponseOrder;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class OrderServiceImpl implements OrderService{
 
     private final OrderRepository orderRepository;
@@ -30,7 +32,7 @@ public class OrderServiceImpl implements OrderService{
     @Override
     public ResponseOrder createOrder(String userId, RequestOrder requestOrder) {
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-
+        log.info("Before add orders data");
         OrderDto orderDetails = mapper.map(requestOrder, OrderDto.class);
 
         orderDetails.setUserId(userId);
@@ -38,16 +40,18 @@ public class OrderServiceImpl implements OrderService{
         orderDetails.setTotalPrice(orderDetails.getQty() * orderDetails.getUnitPrice());
 
         Order order = mapper.map(orderDetails, Order.class);
-//        orderRepository.save(order);
+        orderRepository.save(order);
 
-        kafkaProducer.send("example-catalog-topic", orderDetails);
-        orderProducer.send("orders", orderDetails);
+//        kafkaProducer.send("example-catalog-topic", orderDetails);
+//        orderProducer.send("orders", orderDetails);
 
+        log.info("After added orders data");
         return mapper.map(order, ResponseOrder.class);
     }
 
     @Override
     public List<ResponseOrder> getOrderByUserId(String userId) {
+        log.info("retrieve orders data");
         return orderRepository.findByUserId(userId).stream()
                 .map(v -> mapper.map(v, ResponseOrder.class))
                 .collect(Collectors.toList());
