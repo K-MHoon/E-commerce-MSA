@@ -1,5 +1,5 @@
 server:
-  port: 8000
+  port: 8081
 
 eureka:
   client:
@@ -33,7 +33,7 @@ spring:
 #          uri: lb://USER-SERVICE
 #          predicates:
 #            - Path=/user-service/**
-        - id: user-service
+        - id: user-service-login
           uri: lb://USER-SERVICE
           predicates:
             - Path=/user-service/login
@@ -41,7 +41,7 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
-        - id: user-service
+        - id: user-service-join
           uri: lb://USER-SERVICE
           predicates:
             - Path=/user-service/users
@@ -49,7 +49,7 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
-        - id: user-service
+        - id: user-service-actuator
           uri: lb://USER-SERVICE
           predicates:
             - Path=/user-service/actuator/**
@@ -100,4 +100,4 @@ management:
   endpoints:
     web:
       exposure:
-        include: refresh, health, beans, httptrace, busrefresh
+        include: refresh, health, beans, busrefresh, info, metrics, prometheus
