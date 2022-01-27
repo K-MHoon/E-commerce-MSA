@@ -36,12 +36,12 @@ public class OrderController {
 
     @GetMapping("/{userId}/orders")
     public ResponseEntity<List<ResponseOrder>> getOrder(@PathVariable("userId") String userId) throws Exception {
-        try{
-            Thread.sleep(1000);
-            throw new Exception("장애 발생");
-        } catch (InterruptedException ex) {
-            log.error(ex.getMessage());
-        }
+//        try{
+//            Thread.sleep(1000);
+//            throw new Exception("장애 발생");
+//        } catch (InterruptedException ex) {
+//            log.error(ex.getMessage());
+//        }
         return new ResponseEntity<>(orderService.getOrderByUserId(userId), HttpStatus.OK);
     }
 }

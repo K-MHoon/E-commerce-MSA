@@ -42,7 +42,7 @@ public class OrderServiceImpl implements OrderService{
         Order order = mapper.map(orderDetails, Order.class);
         orderRepository.save(order);
 
-//        kafkaProducer.send("example-catalog-topic", orderDetails);
+        kafkaProducer.send("example-catalog-topic", orderDetails);
 //        orderProducer.send("orders", orderDetails);
 
         log.info("After added orders data");
